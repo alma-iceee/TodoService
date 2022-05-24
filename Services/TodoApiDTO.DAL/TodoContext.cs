@@ -5,9 +5,9 @@ using System.Text;
 
 namespace TodoApiDTO.DAL
 {
-    public class MyDBContext : DbContext
+    public class TodoContext : DbContext
     {
-        public MyDBContext(DbContextOptions<MyDBContext> options) : base(options)
+        public TodoContext(DbContextOptions<TodoContext> options) : base(options)
         {
             Database.EnsureCreated();
         }

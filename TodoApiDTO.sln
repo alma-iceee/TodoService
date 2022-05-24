@@ -4,8 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TodoApiDTO", "TodoApiDTO.csproj", "{623124F9-F5BA-42DD-BC26-A1720774229C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F85C96D8-8EC4-40E8-8788-D43C0CAD27A2} = {F85C96D8-8EC4-40E8-8788-D43C0CAD27A2}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApiDTO.DAL", "Services\TodoApiDTO.DAL\TodoApiDTO.DAL.csproj", "{F85C96D8-8EC4-40E8-8788-D43C0CAD27A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TodoApiDTO.DAL", "Services\TodoApiDTO.DAL\TodoApiDTO.DAL.csproj", "{F85C96D8-8EC4-40E8-8788-D43C0CAD27A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
