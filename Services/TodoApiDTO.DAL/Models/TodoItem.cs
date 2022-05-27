@@ -1,4 +1,4 @@
-﻿namespace TodoApiDTO.DAL
+﻿namespace TodoApiDTO.DAL.Models
 {
     public class TodoItem
     {

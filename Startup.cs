@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using TodoApiDTO.BLL.Services;
 using TodoApiDTO.DAL;
 
 namespace TodoApi
@@ -30,6 +31,8 @@ namespace TodoApi
         {
             services.AddDbContext<TodoContext>(opt =>
                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IUnitOfWork, EFUnitOfWork>();
+            services.AddTransient<ITodoItemService, TodoItemService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
