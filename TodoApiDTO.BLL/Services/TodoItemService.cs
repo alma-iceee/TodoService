@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TodoApiDTO.BLL.DTOs;
@@ -10,10 +12,13 @@ namespace TodoApiDTO.BLL.Services
     public class TodoItemService : ITodoItemService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<TodoItemService> _logger;
 
-        public TodoItemService(IUnitOfWork unitOfWork)
+        public TodoItemService(IUnitOfWork unitOfWork, ILogger<TodoItemService> logger)
         {
             _unitOfWork = unitOfWork;
+
+            _logger = logger;
         }
 
         public async Task<TodoItemDTO> Create(TodoItemDTO todoItemDTO)
@@ -21,43 +26,90 @@ namespace TodoApiDTO.BLL.Services
             var todoItem = new TodoItem
             {
                 IsComplete = todoItemDTO.IsComplete,
-                Name = todoItemDTO.Name
+                Name = todoItemDTO.Name,
+                Secret = "some secret"
             };
 
-            await _unitOfWork.TodoItems.AddAsync(todoItem);
+            try
+            {
+                await _unitOfWork.TodoItems.AddAsync(todoItem);
 
-            await _unitOfWork.CommitAsync();
+                await _unitOfWork.CommitAsync();
+            }
+            catch(Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+            }
 
             return todoItemDTO;
         }
 
         public async Task Delete(long id)
         {
-            _unitOfWork.TodoItems.Remove(id);
+            try
+            {
+                var todoItem = await _unitOfWork.TodoItems.GetAsync(id);
 
-            await _unitOfWork.CommitAsync();
+                if (todoItem == null)
+                {
+                    return;
+                }
+
+                _unitOfWork.TodoItems.Remove(todoItem);
+
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+            }
         }
 
         public async Task<TodoItemDTO> Get(long id)
         {
-            return ItemToDTO(await _unitOfWork.TodoItems.GetAsync(id));
+            try
+            {
+                return ItemToDTO(await _unitOfWork.TodoItems.GetAsync(id));
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+
+                return null;
+            }
         }
 
         public async Task<IEnumerable<TodoItemDTO>> GetAll()
         {
-            var records = await _unitOfWork.TodoItems.GetAllAsync();
+            try
+            {
+                var records = await _unitOfWork.TodoItems.GetAllAsync();
 
-            return records.Select(x => ItemToDTO(x)).ToList();
+                return records.Select(x => ItemToDTO(x)).ToList();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+
+                return null;
+            }
         }
 
         public async Task Update(long id, TodoItemDTO todoItemDTO)
         {
-            var todoItemToBeUpdated = await _unitOfWork.TodoItems.GetAsync(id);
+            try
+            {
+                var todoItemToBeUpdated = await _unitOfWork.TodoItems.GetAsync(id);
 
-            todoItemToBeUpdated.Name = todoItemDTO.Name;
-            todoItemToBeUpdated.IsComplete = todoItemDTO.IsComplete;
+                todoItemToBeUpdated.Name = todoItemDTO.Name;
+                todoItemToBeUpdated.IsComplete = todoItemDTO.IsComplete;
 
-            await _unitOfWork.CommitAsync();
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+            }
         }
 
         private static TodoItemDTO ItemToDTO(TodoItem todoItemDTO) =>

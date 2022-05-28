@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TodoApiDTO.BLL.DTOs;
 using TodoApiDTO.BLL.Services;
@@ -13,49 +12,89 @@ namespace TodoApi.Controllers
     [ApiController]
     public class TodoItemsController : ControllerBase
     {
-        private readonly ILogger<TodoItemsController> _logger;
         private readonly ITodoItemService _todoItemService;
+        private readonly ILogger<TodoItemsController> _logger;
 
         public TodoItemsController(ITodoItemService todoItemService, ILogger<TodoItemsController> logger)
         {
             _todoItemService = todoItemService;
 
             _logger = logger;
-            _logger.LogDebug(1, "NLog injected into TodoItemsController");
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
-            return Ok(await _todoItemService.GetAll());
+            try
+            {
+                return Ok(await _todoItemService.GetAll());
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+
+                return Ok(null);
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItem(long id)
         {
-            return await _todoItemService.Get(id);
+            try
+            {
+                return await _todoItemService.Get(id);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+
+                return Ok(null);
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTodoItem(long id, TodoItemDTO todoItemDTO)
         {
-            await _todoItemService.Update(id, todoItemDTO);
+            try
+            {
+                await _todoItemService.Update(id, todoItemDTO);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+            }
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpPost]
         public async Task<ActionResult<TodoItemDTO>> CreateTodoItem(TodoItemDTO todoItemDTO)
         {
-            return await _todoItemService.Create(todoItemDTO);
+            try
+            {
+                return await _todoItemService.Create(todoItemDTO);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+
+                return Ok();
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(long id)
         {
-            await _todoItemService.Delete(id);
+            try
+            {
+                await _todoItemService.Delete(id);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception.Message, exception);
+            }
 
-            return NoContent();
+            return Ok();
         }   
     }
 }

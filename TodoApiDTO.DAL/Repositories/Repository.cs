@@ -18,11 +18,9 @@ namespace TodoApiDTO.DAL.Repositories
             await _todoContext.Set<T>().AddAsync(item);
         }
 
-        public void Remove(long id)
+        public void Remove(T item)
         {
-            var record = _todoContext.Set<T>().Find(id);
-
-            _todoContext.Set<T>().Remove(record);
+            _todoContext.Set<T>().Remove(item);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()

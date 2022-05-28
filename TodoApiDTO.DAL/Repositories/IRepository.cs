@@ -8,6 +8,6 @@ namespace TodoApiDTO.DAL.Repositories
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetAsync(long id);
         Task AddAsync(T item);
-        void Remove(long id);
+        void Remove(T item);
     }
 }
